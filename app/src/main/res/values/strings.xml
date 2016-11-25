@@ -3,4 +3,8 @@
     <string name="viewODBButton">View ODBII Codes</string>
     <string name="recordTripsButton">Record Trip</string>
     <string name="viewUpTripsButton">View/Upload Trip</string>
+    <string name="enterVIdLabel">Vehicle Lookup</string>
+    <string name="enter">Enter</string>
+    <string name="cancel">Cancel</string>
+    <string name="id">Vehicle ID</string>
 </resources>

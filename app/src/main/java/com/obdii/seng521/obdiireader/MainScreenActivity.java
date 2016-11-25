@@ -1,13 +1,42 @@
 package com.obdii.seng521.obdiireader;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 public class MainScreenActivity extends AppCompatActivity {
-
+    String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+
+        Button viewCodeButton = (Button) findViewById(R.id.viewCodeButton);
+        viewCodeButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment idFragment = new RequestIDDialogFragment();
+                idFragment.show(getFragmentManager(), "viewCodesID");
+            }
+        });
+        Button recordButton = (Button) findViewById(R.id.recordButton);
+        recordButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment idFragment = new RequestIDDialogFragment();
+                idFragment.show(getFragmentManager(), "recordTripID");
+            }
+        });
+        Button uploadButton = (Button) findViewById(R.id.uploadButton);
+        uploadButton.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
+
+
 }
