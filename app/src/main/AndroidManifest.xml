@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -27,6 +28,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.obdii.seng521.obdiireader.MainScreenActivity" />
         </activity>
+        <activity
+            android:name=".ViewUploadTripsActivity"
+            android:label="@string/title_activity_view_upload_trips"
+            android:parentActivityName=".MainScreenActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.obdii.seng521.obdiireader.MainScreenActivity" />
+        </activity>
+        <activity android:name=".ViewCodes" />
+        <activity android:name=".ReadLogActivity"></activity>
     </application>
 
 </manifest>

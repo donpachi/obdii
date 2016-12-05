@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:id="@+id/vehicleIDNum" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:layout_below="@+id/vehicleIDNum"
+        android:layout_toLeftOf="@+id/vehicleIDNum"
+        android:layout_toStartOf="@+id/vehicleIDNum"
+        android:layout_marginRight="31dp"
+        android:layout_marginEnd="31dp"
+        android:id="@+id/RPM" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fuelcode"
+        android:layout_below="@+id/RPM"
+        android:layout_alignLeft="@+id/RPM"
+        android:layout_alignStart="@+id/RPM" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sbcode"
+        android:layout_below="@+id/fuelcode"
+        android:layout_alignLeft="@+id/fuelcode"
+        android:layout_alignStart="@+id/fuelcode" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/abscode"
+        android:layout_below="@+id/sbcode"
+        android:layout_alignStart="@+id/sbcode" />
+
+</RelativeLayout>
