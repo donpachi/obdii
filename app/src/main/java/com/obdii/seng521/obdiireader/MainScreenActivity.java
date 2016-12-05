@@ -28,14 +28,14 @@ public class MainScreenActivity extends AppCompatActivity implements RequestIDDi
             public void onClick(View v) {
                 Intent intent = new Intent(MainScreenActivity.this, TripRecordActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
         Button uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MainScreenActivity.this, ViewUploadTripsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -46,6 +46,9 @@ public class MainScreenActivity extends AppCompatActivity implements RequestIDDi
     public void onDialogPositiveClick(DialogFragment dialog){
         RequestIDDialogFragment dFragment = (RequestIDDialogFragment) dialog;
         id = dFragment.getVehicleID();
+        Intent viewCodesIntent = new Intent(MainScreenActivity.this, ViewCodes.class);
+        viewCodesIntent.putExtra("id", id);
+        startActivity(viewCodesIntent);
     }
 
     @Override

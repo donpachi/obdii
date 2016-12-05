@@ -18,7 +18,6 @@ import android.content.pm.PackageManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
@@ -29,10 +28,6 @@ import static java.lang.Math.*;
 public class TripRecordActivity extends AppCompatActivity {
     // Android 6.0 Permissions
     private static final String[] INITIAL_PERMS={
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-    };
-    private static final String[] LOCATION_PERMS={
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
@@ -128,6 +123,8 @@ public class TripRecordActivity extends AppCompatActivity {
         timerTextView.setSingleLine(false);
         timerTextView.setMovementMethod(new ScrollingMovementMethod());
 
+        final TextView fileNameTextView = (TextView) findViewById(R.id.fileName);
+
         Button startStopButton = (Button) findViewById(R.id.startStopButton);
         startStopButton.setText("start trip");
         startStopButton.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +141,7 @@ public class TripRecordActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         // TODO
                     }
+                    fileNameTextView.setText("");
                 } else {
                     if (!canAccessLocation()) {
                         requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
@@ -152,6 +150,7 @@ public class TripRecordActivity extends AppCompatActivity {
                         Calendar calendar = Calendar.getInstance();
                         String fileName = sdf.format(calendar.getTime()) + ".log";
                         File file = new File(getApplicationContext().getFilesDir(), fileName);
+                        fileNameTextView.setText(fileName);
 
                         try {
 //                            file.getParentFile().mkdirs();
