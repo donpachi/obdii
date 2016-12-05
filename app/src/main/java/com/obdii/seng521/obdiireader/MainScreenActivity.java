@@ -1,6 +1,7 @@
 package com.obdii.seng521.obdiireader;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -25,8 +26,9 @@ public class MainScreenActivity extends AppCompatActivity implements RequestIDDi
         recordButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment idFragment = new RequestIDDialogFragment();
-                idFragment.show(getFragmentManager(), "recordTripID");
+                Intent intent = new Intent(MainScreenActivity.this, TripRecordActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
         Button uploadButton = (Button) findViewById(R.id.uploadButton);

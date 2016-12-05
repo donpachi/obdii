@@ -7,4 +7,5 @@
     <string name="enter">Enter</string>
     <string name="cancel">Cancel</string>
     <string name="id">Vehicle ID</string>
+    <string name="title_activity_trip_record">TripRecordActivity</string>
 </resources>
