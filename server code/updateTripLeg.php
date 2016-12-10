@@ -25,3 +25,7 @@
 		}
 			$conn = null;
 	}
+	else{
+		print json_encode("POST parameters set incorrectly");
+	}
+	$conn = null;
