@@ -92,8 +92,6 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 uploadAllFiles();
-                finish();
-                startActivity(getIntent());
             }
         });
     }
@@ -117,22 +115,27 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                         url = new URL(HOST + "webserver/updateTripLeg.php");
                         br = new BufferedReader(new FileReader(f));
                         String line;
-                        urlParams = "tripID=" + tripID;
+                        urlParams = "tripid=" + tripID;
 
                         // first line is vid
                         line = br.readLine();
+                        String resp = "";
                         while ((line = br.readLine()) != null) {
-                                urlParams += "&time='" + line + "'";
-                                line = br.readLine();
-                                urlParams += "&xloc=" + line.split(" ")[3];
-                                line = br.readLine();
-                                urlParams += "&yloc=" + line.split(" ")[3];
-                                line = br.readLine();
-                                urlParams += "&speed=" + Double.valueOf(line.split(" ")[3]).longValue();
-                                sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
-                                urlParams = "tripID=" + tripID;
+                            urlParams += "&time='" + line + "'";
+                            line = br.readLine();
+                            urlParams += "&xloc=" + line.split(" ")[3];
+                            line = br.readLine();
+                            urlParams += "&yloc=" + line.split(" ")[3];
+                            line = br.readLine();
+                            urlParams += "&speed=" + Double.valueOf(line.split(" ")[3]).longValue();
+                            resp = sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
+                            urlParams = "tripid=" + tripID;
                         }
-                        moveFile(params[0]);
+                        if (resp.toLowerCase().contains("success")) {
+                            moveFile(params[0]);
+                            finish();
+                            startActivity(getIntent());
+                        }
                     } catch (IOException e) {
                         Log.d("trips loop", e.getMessage());
                         e.printStackTrace();
