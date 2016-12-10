@@ -1,7 +1,9 @@
 package com.obdii.seng521.obdiireader;
 
 import android.Manifest;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,7 +27,7 @@ import java.util.Calendar;
 
 import static java.lang.Math.*;
 
-public class TripRecordActivity extends AppCompatActivity {
+public class TripRecordActivity extends AppCompatActivity implements RequestIDDialogFragment.InputDialogListener {
     // Android 6.0 Permissions
     private static final String[] INITIAL_PERMS={
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -69,8 +71,11 @@ public class TripRecordActivity extends AppCompatActivity {
 
     // textbox
     protected TextView timerTextView;
+    protected TextView fileNameTextView;
+    protected Button b;
 
     // location objects
+    protected String id;
     protected LocationManager lm;
     protected Location loc;
     protected GPSCoord lastPoint = new GPSCoord();
@@ -123,7 +128,7 @@ public class TripRecordActivity extends AppCompatActivity {
         timerTextView.setSingleLine(false);
         timerTextView.setMovementMethod(new ScrollingMovementMethod());
 
-        final TextView fileNameTextView = (TextView) findViewById(R.id.fileName);
+        fileNameTextView = (TextView) findViewById(R.id.fileName);
 
         Button startStopButton = (Button) findViewById(R.id.startStopButton);
         startStopButton.setText("start trip");
@@ -131,7 +136,7 @@ public class TripRecordActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Button b = (Button) v;
+                b = (Button) v;
                 if (b.getText().equals("stop trip")) {
                     timerHandler.removeCallbacks(timerRunnable);
                     b.setText("start trip");
@@ -143,31 +148,45 @@ public class TripRecordActivity extends AppCompatActivity {
                     }
                     fileNameTextView.setText("");
                 } else {
-                    if (!canAccessLocation()) {
-                        requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
-                    } else {
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-                        Calendar calendar = Calendar.getInstance();
-                        String fileName = sdf.format(calendar.getTime()) + ".log";
-                        File file = new File(getApplicationContext().getFilesDir(), fileName);
-                        fileNameTextView.setText(fileName);
-
-                        try {
-//                            file.getParentFile().mkdirs();
-                            file.createNewFile();
-                            stream = new OutputStreamWriter(getApplicationContext().openFileOutput(fileName, Context.MODE_PRIVATE));
-                        } catch (FileNotFoundException e) {
-                            // TODO
-                        } catch (IOException e) {
-                            // TODO
-                        }
-
-                        timerHandler.postDelayed(timerRunnable, 0);
-                        b.setText("stop trip");
-                    }
+                    DialogFragment idFragment = new RequestIDDialogFragment();
+                    idFragment.show(getFragmentManager(), "viewCodesID");
                 }
             }
         });
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog){
+        RequestIDDialogFragment dFragment = (RequestIDDialogFragment) dialog;
+        id = dFragment.getVehicleID();
+        if (!canAccessLocation()) {
+            requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
+        } else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+            Calendar calendar = Calendar.getInstance();
+            String fileName = sdf.format(calendar.getTime()) + ".log";
+            File file = new File(getApplicationContext().getFilesDir(), fileName);
+            fileNameTextView.setText(fileName);
+
+            try {
+//                            file.getParentFile().mkdirs();
+                file.createNewFile();
+                stream = new OutputStreamWriter(getApplicationContext().openFileOutput(fileName, Context.MODE_PRIVATE));
+                stream.write("Vehicle ID: " + id + "\n");
+            } catch (FileNotFoundException e) {
+                // TODO
+            } catch (IOException e) {
+                // TODO
+            }
+
+            timerHandler.postDelayed(timerRunnable, 0);
+            b.setText("stop trip");
+        }
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog){
+        //behavior for a negative click
     }
 
     private void updateLocations() {

@@ -68,38 +68,37 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
             if (filePath.endsWith(".log")) {
                 adapter.add(
                         filePath.split("/")[6]
-                        + "\nUploaded: No ("
-                        + String.format("%.2f", (double) files[i].length()/1024) + " kB)"
+                        + "\n(" + String.format("%.2f", (double) files[i].length()/1024) + " kB)"
                 );
             }
         }
 
-        f = new File(getApplicationContext().getFilesDir().toString() + "/uploaded");
-        if (!f.exists()) {
-            f.mkdirs();
-        } else {
-            files = f.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                String filePath = files[i].getPath();
-                if (filePath.endsWith(".log")) {
-                    adapter.add(
-                            "uploaded/" + filePath.split("/")[7]
-                            + "\nUploaded: Yes ("
-                            + String.format("%.2f", (double) files[i].length() / 1024) + " kB)"
-                    );
-                }
-            }
-        }
-
-        Button uploadButton = (Button) findViewById(R.id.uploadButton);
-        uploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadAllFiles();
-                finish();
-                startActivity(getIntent());
-            }
-        });
+//        f = new File(getApplicationContext().getFilesDir().toString() + "/uploaded");
+//        if (!f.exists()) {
+//            f.mkdirs();
+//        } else {
+//            files = f.listFiles();
+//            for (int i = 0; i < files.length; i++) {
+//                String filePath = files[i].getPath();
+//                if (filePath.endsWith(".log")) {
+//                    adapter.add(
+//                            "uploaded/" + filePath.split("/")[7]
+//                            + "\nUploaded: Yes ("
+//                            + String.format("%.2f", (double) files[i].length() / 1024) + " kB)"
+//                    );
+//                }
+//            }
+//        }
+//
+//        Button uploadButton = (Button) findViewById(R.id.uploadButton);
+//        uploadButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                uploadAllFiles();
+//                finish();
+//                startActivity(getIntent());
+//            }
+//        });
     }
 
     protected class SendPostRequest extends AsyncTask<String, Void, String> {
