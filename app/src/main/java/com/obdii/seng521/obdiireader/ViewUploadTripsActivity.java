@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +34,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import static java.net.HttpURLConnection.HTTP_OK;
 
 public class ViewUploadTripsActivity extends AppCompatActivity {
     protected ArrayList<String> listItems = new ArrayList<String>();
@@ -68,78 +71,74 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
             if (filePath.endsWith(".log")) {
                 adapter.add(
                         filePath.split("/")[6]
-                        + "\n(" + String.format("%.2f", (double) files[i].length()/1024) + " kB)"
+                        + "\nUploaded: No ("
+                        + String.format("%.2f", (double) files[i].length()/1024) + " kB)"
                 );
             }
         }
 
-//        f = new File(getApplicationContext().getFilesDir().toString() + "/uploaded");
-//        if (!f.exists()) {
-//            f.mkdirs();
-//        } else {
-//            files = f.listFiles();
-//            for (int i = 0; i < files.length; i++) {
-//                String filePath = files[i].getPath();
-//                if (filePath.endsWith(".log")) {
-//                    adapter.add(
-//                            "uploaded/" + filePath.split("/")[7]
-//                            + "\nUploaded: Yes ("
-//                            + String.format("%.2f", (double) files[i].length() / 1024) + " kB)"
-//                    );
-//                }
-//            }
-//        }
-//
-//        Button uploadButton = (Button) findViewById(R.id.uploadButton);
-//        uploadButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                uploadAllFiles();
-//                finish();
-//                startActivity(getIntent());
-//            }
-//        });
+        f = new File(getApplicationContext().getFilesDir().toString() + "/uploaded");
+        if (!f.exists()) {
+            f.mkdirs();
+        } else {
+            files = f.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                String filePath = files[i].getPath();
+                if (filePath.endsWith(".log")) {
+                    adapter.add(
+                            "uploaded/" + filePath.split("/")[7]
+                            + "\nUploaded: Yes ("
+                            + String.format("%.2f", (double) files[i].length() / 1024) + " kB)"
+                    );
+                }
+            }
+        }
+
+        Button uploadButton = (Button) findViewById(R.id.uploadButton);
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                uploadAllFiles();
+                finish();
+                startActivity(getIntent());
+            }
+        });
     }
 
     protected class SendPostRequest extends AsyncTask<String, Void, String> {
+        private final String HOST = "http://68.147.200.5/";
+        private String ADDRESS;
 
         @Override
         protected String doInBackground(String... params) {
             try {
-                URL url = new URL("http://68.147.199.144/webserver/uploadNewTrip.php");
-                String tripID = sendRequest(url, "POST", "vid", "85335", "time", params[0].split(".")[0].split("/")[-1].replace("_", " "));
+                String vid = params[0].split(" ")[0];
+                String time = "'" + params[0].split(" ")[1].replace("_", " ") + "'";
+                String urlParams = "vid=" + vid + "&time=" + time;
+                URL url = new URL(HOST + "webserver/uploadNewTrip.php");
+                String tripID = sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
                 if (tripID != null) {
                     File f = new File(params[0]);
                     BufferedReader br = null;
                     try {
-                        url = new URL("http://68.147.199.144/webserver/updateTripLeg.php");
+                        url = new URL(HOST + "webserver/updateTripLeg.php");
                         br = new BufferedReader(new FileReader(f));
                         String line;
-                        String tripParams[] = new String[10];
-                        tripParams[0] = "tripID";
-                        tripParams[1] = tripID;
-                        tripParams[2] = "time";
-                        tripParams[4] = "xloc";
-                        tripParams[6] = "yloc";
-                        tripParams[8] = "speed";
-
+                        urlParams = "tripID=" + tripID;
 
                         NumberFormat formatter = new DecimalFormat("###.#");
+                        // first line is vid
                         line = br.readLine();
-                        if (line != null) {
+                        if ((line = br.readLine()) != null) {
                             while (true) {
-                                tripParams[3] = line;
+                                urlParams += "&time='" + line + "'";
                                 line = br.readLine();
-                                tripParams[5] = line.split(" ")[1];
+                                urlParams += "&xloc=" + line.split(" ")[1];
                                 line = br.readLine();
-                                tripParams[7] = line.split(" ")[1];
+                                urlParams += "&yloc=" + line.split(" ")[1];
                                 line = br.readLine();
-                                tripParams[9] = formatter.format(line.split(" ")[1]);
-                                sendRequest(url, "POST", tripParams);
-                                line = br.readLine();
-                                if (line == null) {
-                                    break;
-                                }
+                                urlParams += "&speed=" + formatter.format(line.split(" ")[1]);
+                                sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
                             }
                         }
                     } catch (IOException e) {
@@ -152,7 +151,7 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                         }
                     }
                 } else {
-                    return new String("bad response");
+                    return "bad response";
                 }
             } catch (Exception e) {
                 // TODO
@@ -160,54 +159,61 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
             return null;
         }
 
-        private String sendRequest(URL url, String type, String... params) {
-            if (params.length % 2 == 1 || params.length == 0) {
-                return null;
-            }
-
-            BufferedWriter bw;
-            OutputStream os;
-            HttpURLConnection conn;
-            BufferedReader br;
+        private String sendRequest(URL url, String method, String type, String params) {
+            HttpURLConnection conn = null;
+            DataOutputStream dos = null;
             try {
-                JSONObject postDataParams = new JSONObject();
-                for (int i = 0; i < params.length; i = i++) {
-                    postDataParams.put(params[i++], params[i]);
-                }
+                // open conn
                 conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod(type);
-                conn.setDoInput(true);
+                // POST or GET
+                conn.setRequestMethod(method);
+                // Content-type
+                conn.setRequestProperty("Content-Type", type);
+                conn.setRequestProperty("Content-Length", Integer.toString(params.getBytes().length));
+                conn.setRequestProperty("Content-Language", "en-US");
+
+                // send request
                 conn.setDoOutput(true);
-
-                os = conn.getOutputStream();
-                bw = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                bw.write(getPostDataString(postDataParams));
-                bw.flush();
-
-                bw.close();
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuffer sb = new StringBuffer("");
-                    String line = "";
-
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    br.close();
-
-                    return sb.toString();
-                } else {
-                    return null;
-                }
+                dos = new DataOutputStream(conn.getOutputStream());
+                dos.writeBytes(params);
+                dos.flush();
             } catch (Exception e) {
-                // TODO
-                return null;
+
+            } finally {
+                try {
+                    dos.close();
+                } catch (Exception e) {
+
+                }
             }
+            String response = null;
+            if (conn != null) {
+                BufferedReader br = null;
+                StringBuffer sb = null;
+                try {
+                    // get response code
+                    int responseCode = conn.getResponseCode();
+                    if (responseCode == HTTP_OK) {
+                        // get response
+                        br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        sb = new StringBuffer();
+                        String temp;
+                        while ((temp = br.readLine()) != null) {
+                            sb.append(temp);
+                        }
+                        response = sb.toString();
+                    }
+                } catch (Exception e) {
+
+                } finally {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+
+                    }
+                }
+            }
+            return response;
         }
     }
 
@@ -225,24 +231,6 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
 
     private void uploadFile(String fileName) {
         new SendPostRequest().execute(fileName);
-    }
-
-    public String getPostDataString(JSONObject params) throws Exception {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        Iterator<String> itr = params.keys();
-        while(itr.hasNext()){
-            String key= itr.next();
-            Object value = params.get(key);
-            if (first)
-                first = false;
-            else
-                result.append("&");
-            result.append(URLEncoder.encode(key, "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-        }
-        return result.toString();
     }
 
     private void moveFile(String fileName) {
