@@ -63,7 +63,7 @@ public class RequestIDDialogFragment extends DialogFragment {
     }
 
     private boolean validateID(String id) {
-        if (id == ""){
+        if (id.equals("")){
             RequestIDDialogFragment.this.getDialog().cancel();
             DialogFragment errorFragment = new ErrorDialogFragment();
             errorFragment.show(getFragmentManager(), "errorDialog");
