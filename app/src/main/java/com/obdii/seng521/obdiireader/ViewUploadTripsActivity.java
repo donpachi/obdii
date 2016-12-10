@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,10 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,14 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
@@ -106,7 +99,7 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
     }
 
     protected class SendPostRequest extends AsyncTask<String, Void, String> {
-        private final String HOST = "http://68.147.200.5/";
+        private final String HOST = "http://68.147.216.78/";
         private String ADDRESS;
 
         @Override
@@ -116,9 +109,9 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                 String time = "'" + params[0].split(" ")[1].replace("_", " ") + "'";
                 String urlParams = "vid=" + vid + "&time=" + time;
                 URL url = new URL(HOST + "webserver/uploadNewTrip.php");
-                String tripID = sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
+                String tripID = sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams).split("\"")[3];
                 if (tripID != null) {
-                    File f = new File(params[0]);
+                    File f = new File(getApplicationContext().getFilesDir() + "/" + params[0]);
                     BufferedReader br = null;
                     try {
                         url = new URL(HOST + "webserver/updateTripLeg.php");
@@ -126,24 +119,23 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                         String line;
                         urlParams = "tripID=" + tripID;
 
-                        NumberFormat formatter = new DecimalFormat("###.#");
                         // first line is vid
                         line = br.readLine();
-                        if ((line = br.readLine()) != null) {
-                            while (true) {
+                        while ((line = br.readLine()) != null) {
                                 urlParams += "&time='" + line + "'";
                                 line = br.readLine();
-                                urlParams += "&xloc=" + line.split(" ")[1];
+                                urlParams += "&xloc=" + line.split(" ")[3];
                                 line = br.readLine();
-                                urlParams += "&yloc=" + line.split(" ")[1];
+                                urlParams += "&yloc=" + line.split(" ")[3];
                                 line = br.readLine();
-                                urlParams += "&speed=" + formatter.format(line.split(" ")[1]);
+                                urlParams += "&speed=" + Double.valueOf(line.split(" ")[3]).longValue();
                                 sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
                                 urlParams = "tripID=" + tripID;
-                            }
                         }
+                        moveFile(getApplicationContext().getFilesDir() + "/" + params[0]);
                     } catch (IOException e) {
-                        // TODO
+                        Log.d("trips loop", e.getMessage());
+                        e.printStackTrace();
                     } finally {
                         try {
                             br.close();
@@ -152,10 +144,12 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                         }
                     }
                 } else {
+                    Log.d("tripID", "tripID is null!");
                     return "bad response";
                 }
-            } catch (Exception e) {
-                // TODO
+            } catch (IOException e) {
+                Log.d("trip mgr", e.getMessage());
+                e.printStackTrace();
             }
             return null;
         }
@@ -225,7 +219,6 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
             String filePath = files[i].getPath().split("/")[6];
             if (filePath.endsWith(".log")) {
                 uploadFile(filePath);
-                moveFile(filePath);
             }
         }
     }
