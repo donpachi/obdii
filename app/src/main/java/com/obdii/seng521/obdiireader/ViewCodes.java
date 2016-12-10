@@ -50,7 +50,7 @@ public class ViewCodes extends Activity {
                 if (!canAccessInternet()) {
                     requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
                 }
-                String urlstring = "http://68.147.199.144/webserver/queryOBD.php?id=" + arg[0];
+                String urlstring = "http://68.147.216.78/webserver/queryOBD.php?id=" + arg[0];
                 URL url = new URL(urlstring);
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -82,10 +82,10 @@ public class ViewCodes extends Activity {
         protected void onPostExecute(String result) {
             try{
                 JSONArray jArray = new JSONArray(result);
-                String rpm = jArray.getJSONObject(0).getString("RPM");
-                String fuel = jArray.getJSONObject(0).getString("fuelcode");
-                String seatbelt = jArray.getJSONObject(0).getString("seatbeltcode");
-                String abs = jArray.getJSONObject(0).getString("abscode");
+                String rpm = jArray.getJSONObject(jArray.length()).getString("RPM");
+                String fuel = jArray.getJSONObject(jArray.length()).getString("fuelcode");
+                String seatbelt = jArray.getJSONObject(jArray.length()).getString("seatbeltcode");
+                String abs = jArray.getJSONObject(jArray.length()).getString("abscode");
 
                 TextView rpmText = (TextView)findViewById(R.id.RPM);
                 rpmText.setText("RPM: " + rpm);
