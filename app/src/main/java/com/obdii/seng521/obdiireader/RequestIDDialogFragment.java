@@ -16,9 +16,10 @@ import android.widget.EditText;
 
 public class RequestIDDialogFragment extends DialogFragment {
     private String id;
+    private boolean isValid;
     public interface InputDialogListener{
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        void onDialogPositiveClick(DialogFragment dialog);
+        void onDialogNegativeClick(DialogFragment dialog);
     }
 
     InputDialogListener mListener;
@@ -36,6 +37,7 @@ public class RequestIDDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
+        isValid = false;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -46,6 +48,7 @@ public class RequestIDDialogFragment extends DialogFragment {
                         //grab id
                         EditText editText = (EditText) RequestIDDialogFragment.this.getDialog().findViewById(R.id.vehicleIDString);
                         id = editText.getText().toString();
+                        isValid = validateID(id);
                         mListener.onDialogPositiveClick(RequestIDDialogFragment.this);
                     }
                 })
@@ -59,7 +62,27 @@ public class RequestIDDialogFragment extends DialogFragment {
         return  builder.create();
     }
 
+    private boolean validateID(String id) {
+        if (id == ""){
+            RequestIDDialogFragment.this.getDialog().cancel();
+            DialogFragment errorFragment = new ErrorDialogFragment();
+            errorFragment.show(getFragmentManager(), "errorDialog");
+            return false;
+        }
+        try{
+            Integer.parseInt(id);
+            return true;
+        }catch (NumberFormatException e){
+            RequestIDDialogFragment.this.getDialog().cancel();
+            DialogFragment errorFragment = new ErrorDialogFragment();
+            errorFragment.show(getFragmentManager(), "errorDialog");
+            return false;
+        }
+
+    }
+
     public String getVehicleID(){
         return id;
     }
+    public boolean idValidated(){return isValid;}
 }

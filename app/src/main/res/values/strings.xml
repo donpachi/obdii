@@ -6,7 +6,9 @@
     <string name="enterVIdLabel">Vehicle Lookup</string>
     <string name="enter">Enter</string>
     <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
     <string name="id">Vehicle ID</string>
     <string name="title_activity_trip_record">TripRecordActivity</string>
     <string name="title_activity_view_upload_trips">ViewUploadTripsActivity</string>
+    <string name="id_error_message">Invalid ID</string>
 </resources>

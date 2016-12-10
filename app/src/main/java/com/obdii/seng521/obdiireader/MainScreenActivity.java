@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-public class MainScreenActivity extends AppCompatActivity implements RequestIDDialogFragment.InputDialogListener{
+public class MainScreenActivity extends AppCompatActivity implements RequestIDDialogFragment.InputDialogListener, ErrorDialogFragment.ErrorDialogListener{
     String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +45,22 @@ public class MainScreenActivity extends AppCompatActivity implements RequestIDDi
     @Override
     public void onDialogPositiveClick(DialogFragment dialog){
         RequestIDDialogFragment dFragment = (RequestIDDialogFragment) dialog;
-        id = dFragment.getVehicleID();
-        Intent viewCodesIntent = new Intent(MainScreenActivity.this, ViewCodes.class);
-        viewCodesIntent.putExtra("id", id);
-        startActivity(viewCodesIntent);
+        if (dFragment.idValidated()){
+            id = dFragment.getVehicleID();
+            Intent viewCodesIntent = new Intent(MainScreenActivity.this, ViewCodes.class);
+            viewCodesIntent.putExtra("id", id);
+            startActivity(viewCodesIntent);
+        }
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog){
         //behavior for a negative click
+    }
+
+    @Override
+    public void onErrorDialogPositiveClick(DialogFragment dialog) {
+        DialogFragment idFragment = new RequestIDDialogFragment();
+        idFragment.show(getFragmentManager(), "viewCodesID");
     }
 }
