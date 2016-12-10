@@ -18,14 +18,7 @@
         android:layout_height="360dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/fileList" />
+        android:id="@+id/fileList"
+        android:layout_alignParentBottom="true" />
 
-    <Button
-        android:text="Upload all trips"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:id="@+id/uploadButton"
-        android:layout_below="@+id/fileList"
-        android:layout_centerHorizontal="true" />
 </RelativeLayout>
