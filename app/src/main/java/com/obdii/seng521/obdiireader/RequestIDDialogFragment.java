@@ -70,7 +70,10 @@ public class RequestIDDialogFragment extends DialogFragment {
             return false;
         }
         try{
-            Integer.parseInt(id);
+            int vid = Integer.parseInt(id);
+            if (vid <= 0){
+                return false;
+            }
             return true;
         }catch (NumberFormatException e){
             RequestIDDialogFragment.this.getDialog().cancel();
