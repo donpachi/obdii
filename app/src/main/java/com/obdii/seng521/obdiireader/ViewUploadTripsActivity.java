@@ -139,6 +139,7 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                                 line = br.readLine();
                                 urlParams += "&speed=" + formatter.format(line.split(" ")[1]);
                                 sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
+                                urlParams = "tripID=" + tripID;
                             }
                         }
                     } catch (IOException e) {
