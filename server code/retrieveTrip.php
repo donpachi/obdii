@@ -27,7 +27,7 @@
 		}	
 	}
 	else{
-		print json_encode("Invalid ID");
+		print json_encode("failure");
 	}
 	
 	$conn = null;

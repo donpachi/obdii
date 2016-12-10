@@ -16,7 +16,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:fontFamily="sans-serif"
-            android:textSize="24sp"/>
+            android:textSize="24dp"/>
     </LinearLayout>
     <TextView
         android:id="@+id/id_error_String"
@@ -26,6 +26,6 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="@string/id_error_message"
-        android:textAlignment="center" />
+        android:textSize="20dp"
+        android:text="@string/id_error_message" />
 </LinearLayout>

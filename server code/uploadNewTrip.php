@@ -30,6 +30,6 @@
 		}
 	}
 	else{
-		print("Variables not set");
+		print json_encode("Variables not set");
 	}
 	$conn = null;

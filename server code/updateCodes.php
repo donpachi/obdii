@@ -17,7 +17,7 @@
 			$sql = "INSERT INTO obd(vehicleID, RPM, fuelcode, seatbeltcode, abscode) VALUES ({$vid}, {$rpmcode}, {$fuelcode}, {$seatcode}, {$abscode})";
 				
 			if ($conn->query($sql) === TRUE){
-				print json_encode("Success");
+				print json_encode("success");
 			}			
 		}
 		catch (PDOException $e){

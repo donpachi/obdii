@@ -5,8 +5,8 @@
 	$host = "localhost";
 	$dbname = "fleet";
 	$response = array();
-	if (isset($_POST['tripid']) and isset($_POST['time']) and isset($_POST['xloc']) and isset($_POST['yloc']) and isset($_POST['speed'])){
-		$tripid = $_POST['id'];
+	if (isset($_POST['tripid']) && isset($_POST['time']) && isset($_POST['xloc']) && isset($_POST['yloc']) && isset($_POST['speed'])){
+		$tripid = $_POST['tripid'];
 		$time = $_POST['time'];
 		$xloc = $_POST['xloc'];
 		$yloc = $_POST['yloc'];
@@ -16,8 +16,8 @@
 			$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$sql = "INSERT INTO trips(tripID, time, xloc, yloc, speed) VALUES ({$tripid}, {$time}, {$xloc}, {$yloc}, {$speed})";
 				
-			if ($conn->query($sql) === TRUE){
-				print json_encode("Success");
+			if ($conn->query($sql) == TRUE){
+				print json_encode("success");
 			}			
 		}
 		catch (PDOException $e){
