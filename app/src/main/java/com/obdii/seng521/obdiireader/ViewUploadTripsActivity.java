@@ -265,7 +265,6 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
             // write the output file
             out.flush();
             out.close();
-            out = null;
 
             // delete the original file
             new File(path + "/" + fileName).delete();
