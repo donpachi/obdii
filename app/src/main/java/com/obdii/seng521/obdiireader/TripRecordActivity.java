@@ -37,7 +37,7 @@ public class TripRecordActivity extends AppCompatActivity implements RequestIDDi
     private static final int LOCATION_REQUEST=INITIAL_REQUEST+1;
 
     // Class to store GPS coordinates
-    protected class GPSCoord {
+    public class GPSCoord {
         protected double lat;
         protected double lon;
         protected long time;
@@ -164,7 +164,7 @@ public class TripRecordActivity extends AppCompatActivity implements RequestIDDi
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
             Calendar calendar = Calendar.getInstance();
-            String fileName = sdf.format(calendar.getTime()) + ".log";
+            String fileName = id + " " + sdf.format(calendar.getTime()) + " 1.log";
             File file = new File(getApplicationContext().getFilesDir(), fileName);
             fileNameTextView.setText(fileName);
 
