@@ -82,10 +82,10 @@ public class ViewCodes extends Activity {
         protected void onPostExecute(String result) {
             try{
                 JSONArray jArray = new JSONArray(result);
-                String rpm = jArray.getJSONObject(jArray.length()).getString("RPM");
-                String fuel = jArray.getJSONObject(jArray.length()).getString("fuelcode");
-                String seatbelt = jArray.getJSONObject(jArray.length()).getString("seatbeltcode");
-                String abs = jArray.getJSONObject(jArray.length()).getString("abscode");
+                String rpm = jArray.getJSONObject(jArray.length()-1).getString("RPM");
+                String fuel = jArray.getJSONObject(jArray.length()-1).getString("fuelcode");
+                String seatbelt = jArray.getJSONObject(jArray.length()-1).getString("seatbeltcode");
+                String abs = jArray.getJSONObject(jArray.length()-1).getString("abscode");
 
                 TextView rpmText = (TextView)findViewById(R.id.RPM);
                 rpmText.setText("RPM: " + rpm);
