@@ -132,7 +132,7 @@ public class ViewUploadTripsActivity extends AppCompatActivity {
                                 sendRequest(url, "POST", "application/x-www-form-urlencoded", urlParams);
                                 urlParams = "tripID=" + tripID;
                         }
-                        moveFile(getApplicationContext().getFilesDir() + "/" + params[0]);
+                        moveFile(params[0]);
                     } catch (IOException e) {
                         Log.d("trips loop", e.getMessage());
                         e.printStackTrace();
