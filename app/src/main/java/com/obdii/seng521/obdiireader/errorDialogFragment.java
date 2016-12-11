@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.content.Context;
 
-/**
- * Created by Domo on 12/9/2016.
- */
 
 public class ErrorDialogFragment extends DialogFragment {
     public interface ErrorDialogListener{
